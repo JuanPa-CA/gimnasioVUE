@@ -1,0 +1,73 @@
+/* Global Styles for Master Gym */
+
+body {
+  background-color: #121212;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Card Styles */
+.my-card {
+  border: 1px solid #333;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.my-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 188, 212, 0.2);
+}
+
+/* Navigation Styles */
+.sticky-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid #222;
+}
+
+/* Layout Containers */
+.container-wide {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Typography & Helpers */
+.line-height-relaxed {
+  line-height: 1.6;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.italic {
+  font-style: italic;
+}
+
+/* Utility Classes */
+.rounded-borders {
+  border-radius: 8px;
+}
+
+/* Custom Scrollbar (optional but fits the theme) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00bcd4;
+}
