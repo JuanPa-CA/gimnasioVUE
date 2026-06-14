@@ -4,6 +4,12 @@ const routes = [
   {
     path: '/',
     component: () => import('../views/HomeView.vue'),
+  },
+  {
+    path: '/group/:id',
+    name: 'group',
+    component: () => import('../views/GroupView.vue'),
+    props: true
   }
 ]
 

@@ -1,192 +1,323 @@
 <template>
-  <q-page class="bg-dark text-white">
-    <!-- Hero Section -->
-    <q-parallax :height="300" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop">
-      <div class="absolute-full flex flex-center" style="background: rgba(0,0,0,0.5)">
-        <div class="text-h2 text-bold text-center text-uppercase q-px-md">
-          Master Gym
-          <div class="text-h6 text-weight-light">Tu entrenamiento, tu nivel</div>
-        </div>
-      </div>
-    </q-parallax>
+  <q-page class="page-root">
 
-    <!-- Muscle Groups Navigation -->
-    <div class="sticky-tabs bg-dark q-py-sm">
-      <q-tabs
-        v-model="activeGroup"
-        dense
-        class="text-cyan"
-        active-color="cyan"
-        indicator-color="cyan"
-        align="center"
-        narrow-indicator
-      >
-        <q-tab v-for="group in gymData" :key="group.id" :name="group.id" :label="group.name" />
-      </q-tabs>
-    </div>
+    <!-- Sección de Bienvenida (Hero) -->
+    <header class="hero-section">
+      <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600&auto=format&fit=crop"
+        class="hero-bg" alt="Gimnasio de alto rendimiento" />
+      <div class="hero-overlay" />
+      <div class="hero-content">
+        <div class="hero-eyebrow">Guía de entrenamiento</div>
+        <h1 class="hero-title">ELIGE TU<br /><span class="hero-title-accent">MÚSCULO</span></h1>
+        <p class="hero-sub">
+          ¿Qué vamos a fortalecer hoy? Selecciona el grupo muscular que vas a trabajar y domina cada movimiento con la
+          técnica de un profesional.
+        </p>
 
-    <!-- Content -->
-    <div class="q-pa-md container-wide">
-      <div v-for="group in gymData" :key="group.id" v-show="activeGroup === group.id">
-        <div class="text-h4 q-mb-xl text-cyan text-bold text-uppercase row items-center">
-          <q-icon name="fitness_center" class="q-mr-sm" />
-          {{ group.name }}
-        </div>
-
-        <div class="row q-col-gutter-lg">
-          <div v-for="exercise in group.exercises" :key="exercise.name" class="col-12 col-md-6">
-            <ExerciseCard :exercise="exercise" @click="showDetails" />
+        <!-- Indicadores rápidos -->
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num">4</span>
+            <span class="stat-label">Grupos</span>
+          </div>
+          <div class="stat-divider" />
+          <div class="stat-item">
+            <span class="stat-num">16</span>
+            <span class="stat-label">Ejercicios</span>
+          </div>
+          <div class="stat-divider" />
+          <div class="stat-item">
+            <span class="stat-num">100%</span>
+            <span class="stat-label">Técnica</span>
           </div>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Exercise Detail Dialog -->
-    <ExerciseDetail v-model="detailsModal" :exercise="selectedExercise" />
+    <!-- Panel de Selección de Músculos -->
+    <main class="muscle-groups-section">
+      <div class="section-header q-mb-xl text-center">
+        <h2 class="section-title">GRUPOS MUSCULARES</h2>
+        <p class="section-subtitle">Toca una tarjeta para ver tu plan de entrenamiento</p>
+      </div>
 
-    <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
-      <q-btn fab icon="keyboard_arrow_up" color="cyan" />
+      <div class="muscle-groups-grid">
+        <div v-for="group in gymData" :key="group.id" class="muscle-card" @click="navigateToGroup(group.id)">
+          <div class="muscle-card-content">
+            <q-icon :name="group.icon" size="32px" class="muscle-icon" />
+            <div class="muscle-name">{{ group.name }}</div>
+            <div class="muscle-count">{{ group.exercises.length }} ejercicios</div>
+          </div>
+          <div class="card-arrow">
+            <q-icon name="chevron_right" size="20px" />
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Botón de retorno rápido -->
+    <q-page-scroller position="bottom-right" :scroll-offset="200" :offset="[18, 18]">
+      <q-btn round icon="keyboard_arrow_up" class="scroll-top-btn" />
     </q-page-scroller>
+
   </q-page>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import ExerciseCard from './ExerciseCard.vue'
-import ExerciseDetail from './ExerciseDetail.vue'
+/**
+ * Vista Principal: HomeView
+ * Aquí es donde el usuario comienza su viaje, seleccionando qué grupo muscular entrenar.
+ */
+import { useRouter } from 'vue-router'
+import { gymData } from '../data/gymData'
 
-const activeGroup = ref('pectorales')
-const detailsModal = ref(false)
-const selectedExercise = ref(null)
+const router = useRouter()
 
-const showDetails = (exercise) => {
-  selectedExercise.value = exercise
-  detailsModal.value = true
+/**
+ * Navega hacia la vista de detalles del grupo muscular seleccionado.
+ * @param {string} id - El identificador único del grupo (ej: 'pectorales')
+ */
+const navigateToGroup = (id) => {
+  router.push({ name: 'group', params: { id } })
 }
-
-const gymData = [
-  {
-    id: 'pectorales',
-    name: 'Pectorales',
-    exercises: [
-      {
-        name: 'Press de Banca Plano',
-        explanation: 'Acostado en un banco plano, baja la barra hasta el pecho y empuja hacia arriba. Mantén los pies apoyados y los glúteos en el banco.',
-        video: 'https://www.youtube.com/embed/rT7DgJIMZzo',
-        extra: 'Evita rebotar la barra en el pecho.'
-      },
-      {
-        name: 'Aperturas con Mancuernas',
-        explanation: 'En un banco plano, abre los brazos con una ligera flexión de codo y vuelve a juntarlos arriba, sintiendo el estiramiento.',
-        video: 'https://www.youtube.com/embed/eozdVDA78K0',
-        extra: 'No bajes las mancuernas más allá de la línea de los hombros.'
-      },
-      {
-        name: 'Flexiones de Pecho',
-        explanation: 'Ejercicio básico usando el propio peso corporal. Mantén el cuerpo recto y baja hasta casi tocar el suelo.',
-        video: 'https://www.youtube.com/embed/IODxDxX7oi4',
-        extra: 'Puedes apoyar las rodillas si eres principiante.'
-      },
-      {
-        name: 'Press Inclinado',
-        explanation: 'Similar al press de banca pero en un banco inclinado para enfocar la parte superior del pectoral.',
-        video: 'https://www.youtube.com/embed/SrqOu55lr6g',
-        extra: 'Un ángulo de 30-45 grados es ideal.'
-      }
-    ]
-  },
-  {
-    id: 'espalda',
-    name: 'Espalda',
-    exercises: [
-      {
-        name: 'Dominadas',
-        explanation: 'Cuélgate de una barra y sube hasta que tu barbilla pase la barra. Trabaja el dorsal ancho y la fuerza general.',
-        video: 'https://www.youtube.com/embed/eGo4IYlbE5g',
-        extra: 'Si no puedes, usa una banda elástica o máquina asistida.'
-      },
-      {
-        name: 'Remo con Barra',
-        explanation: 'Flexiona ligeramente las rodillas, inclina el torso y tira de la barra hacia tu ombligo manteniendo la espalda recta.',
-        video: 'https://www.youtube.com/embed/9efgcAjQ870',
-        extra: 'Mantén los codos pegados al cuerpo.'
-      },
-      {
-        name: 'Jalón al Pecho',
-        explanation: 'Sentado en la máquina, tira de la barra hacia la parte superior del pecho apretando las escápulas.',
-        video: 'https://www.youtube.com/embed/CAwf7n6Luuc',
-        extra: 'No tires de la barra hacia la nuca.'
-      },
-      {
-        name: 'Peso Muerto',
-        explanation: 'Levanta la barra desde el suelo usando piernas y espalda, manteniendo la columna en posición neutra en todo momento.',
-        video: 'https://www.youtube.com/embed/op9kVnSso6Q',
-        extra: 'Usa cinturón si vas a cargar mucho peso.'
-      }
-    ]
-  },
-  {
-    id: 'piernas',
-    name: 'Piernas',
-    exercises: [
-      {
-        name: 'Sentadillas con Barra',
-        explanation: 'Baja la cadera como si fueras a sentarte, manteniendo la espalda recta y el peso en los talones.',
-        video: 'https://www.youtube.com/embed/QhVC_AnZYYM',
-        extra: 'Tus rodillas no deben colapsar hacia adentro.'
-      },
-      {
-        name: 'Prensa de Piernas',
-        explanation: 'Empuja la plataforma con los pies, evitando bloquear las rodillas al extender completamente.',
-        video: 'https://www.youtube.com/embed/IZxyjW7MPJQ',
-        extra: 'Coloca los pies a la anchura de los hombros.'
-      },
-      {
-        name: 'Zancadas (Lunges)',
-        explanation: 'Da un paso largo y baja la rodilla trasera hasta que casi toque el suelo.',
-        video: 'https://www.youtube.com/embed/D7KaRcUTQeE',
-        extra: 'Mantén el torso erguido en todo momento.'
-      },
-      {
-        name: 'Extensión de Cuádriceps',
-        explanation: 'Ejercicio de aislamiento en máquina para definir el cuádriceps.',
-        video: 'https://www.youtube.com/embed/YyvSfVLYd80',
-        extra: 'Controla el descenso de la carga.'
-      }
-    ]
-  },
-  {
-    id: 'brazos',
-    name: 'Brazos',
-    exercises: [
-      {
-        name: 'Curl de Bíceps con Barra',
-        explanation: 'Sujeta la barra y flexiona los codos llevando la barra hacia los hombros sin balancear el cuerpo.',
-        video: 'https://www.youtube.com/embed/i1YgFZbf6SU',
-        extra: 'Mantén los codos pegados a los costados.'
-      },
-      {
-        name: 'Press Francés',
-        explanation: 'Acostado, baja la barra Z hacia tu frente flexionando los codos y vuelve a extender.',
-        video: 'https://www.youtube.com/embed/V6CqC56V9nI',
-        extra: 'Ten cuidado de no golpearte la frente.'
-      },
-      {
-        name: 'Martillo con Mancuernas',
-        explanation: 'Agarre neutro para trabajar el bíceps y el braquial.',
-        video: 'https://www.youtube.com/embed/zC3nLlEvin4',
-        extra: 'Ideal para dar grosor al brazo.'
-      },
-      {
-        name: 'Fondos de Tríceps',
-        explanation: 'Usa barras paralelas o un banco para bajar y subir el cuerpo usando la fuerza de los tríceps.',
-        video: 'https://www.youtube.com/embed/2z8JmcrW-As',
-        extra: 'No abras demasiado los codos.'
-      }
-    ]
-  }
-]
 </script>
 
 <style scoped>
+/* Contenedor Raíz */
+.page-root {
+  background: #0f0f0f;
+  min-height: 100vh;
+}
+
+/* --- Hero Section Styles --- */
+.hero-section {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+}
+
+.hero-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
+  filter: saturate(0.6);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.55) 60%,
+      rgba(231, 76, 60, 0.15) 100%);
+}
+
+.hero-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 48px;
+  max-width: 640px;
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #e74c3c;
+  margin-bottom: 10px;
+}
+
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(42px, 6vw, 64px);
+  line-height: 1;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  letter-spacing: 1px;
+}
+
+.hero-title-accent {
+  color: #e74c3c;
+}
+
+.hero-sub {
+  font-size: 14px;
+  color: #aaa;
+  line-height: 1.65;
+  margin: 0 0 24px 0;
+  max-width: 460px;
+}
+
+/* Stats in Hero */
+.hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0 18px 0 0;
+}
+
+.stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: #fff;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #666;
+  margin-top: 2px;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 30px;
+  background: #333;
+  margin: 0 18px 0 0;
+}
+
+/* --- Muscle Group Grid Styles --- */
+.muscle-groups-section {
+  padding: 80px 24px 100px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  color: #fff;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.section-subtitle {
+  color: #555;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.muscle-groups-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.muscle-card {
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 32px 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.muscle-card:hover {
+  border-color: #e74c3c;
+  transform: translateY(-8px);
+  background: #1a1a1a;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.muscle-icon {
+  color: #444;
+  margin-bottom: 16px;
+  transition: all 0.3s;
+}
+
+.muscle-card:hover .muscle-icon {
+  color: #e74c3c;
+  transform: scale(1.15);
+}
+
+.muscle-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.muscle-count {
+  font-size: 12px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 8px;
+}
+
+.card-arrow {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  color: #333;
+  transition: all 0.3s;
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.muscle-card:hover .card-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: #e74c3c;
+}
+
+/* Utils */
+.scroll-top-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 900px) {
+  .muscle-groups-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-section {
+    height: 320px;
+  }
+
+  .hero-content {
+    padding: 0 24px;
+  }
+
+  .muscle-groups-section {
+    padding: 60px 20px;
+  }
+
+  .muscle-groups-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .muscle-card {
+    padding: 24px;
+  }
+}
 </style>
