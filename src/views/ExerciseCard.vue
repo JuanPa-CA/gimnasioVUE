@@ -162,26 +162,45 @@ const videoId = computed(() => {
   margin: 0;
 }
 
+@media (max-width: 350px) {
+  .exercise-title {
+    font-size: 18px;
+  }
+}
+
 .exercise-desc {
   font-size: 13px;
   color: #888;
   line-height: 1.6;
   flex: 1;
   display: -webkit-box;
-
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+@media (max-width: 350px) {
+  .exercise-desc {
+    -webkit-line-clamp: 2;
+  }
 }
 
 /* --- Footer Section --- */
 .card-footer-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
   padding-top: 10px;
   border-top: 1px solid #222;
   margin-top: 4px;
+}
+
+@media (max-width: 350px) {
+  .card-footer-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .tip-row {

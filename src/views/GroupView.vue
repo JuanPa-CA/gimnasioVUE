@@ -5,11 +5,6 @@
     <header class="group-hero">
       <div class="hero-overlay" />
       <div class="hero-content">
-        <!-- Navegación de regreso -->
-        <nav class="back-nav q-mb-md">
-          <q-btn flat no-caps color="white" icon="arrow_back" label="Elegir otro músculo" @click="$router.push('/')" />
-        </nav>
-
         <!-- Info del grupo seleccionado -->
         <div class="row items-center no-wrap">
           <q-icon :name="currentGroup?.icon" size="48px" color="red-6" class="q-mr-md" />
@@ -96,6 +91,12 @@ onMounted(() => {
   border-bottom: 1px solid #222;
 }
 
+@media (max-width: 400px) {
+  .group-hero {
+    padding: 30px 20px;
+  }
+}
+
 .hero-overlay {
   position: absolute;
   inset: 0;
@@ -120,10 +121,22 @@ onMounted(() => {
   letter-spacing: 1px;
 }
 
+@media (max-width: 350px) {
+  .group-title {
+    font-size: 28px;
+  }
+}
+
 .group-sub {
   color: #666;
   margin: 8px 0 0 0;
   font-size: 16px;
+}
+
+@media (max-width: 350px) {
+  .group-sub {
+    font-size: 13px;
+  }
 }
 
 /* --- Content Area & Grid --- */
@@ -131,6 +144,12 @@ onMounted(() => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 24px 80px;
+}
+
+@media (max-width: 400px) {
+  .content-area {
+    padding: 24px 16px 60px;
+  }
 }
 
 .exercise-grid {

@@ -68,8 +68,15 @@
       <!-- Acciones Inferiores -->
       <footer class="detail-actions">
         <q-btn flat label="Cerrar" color="grey-5" v-close-popup class="btn-close" />
-        <q-btn unelevated label="YouTube" class="btn-youtube" icon="play_circle_filled"
-          :href="currentExercise.video.replace('/embed/', '/watch?v=')" target="_blank" type="a" />
+        <q-btn 
+          unelevated 
+          label="YouTube" 
+          class="btn-youtube" 
+          icon="play_circle_filled"
+          :href="currentExercise.video.replace('youtube-nocookie.com', 'youtube.com').replace('/embed/', '/watch?v=')" 
+          target="_blank" 
+          type="a" 
+        />
       </footer>
 
     </q-card>
@@ -273,6 +280,10 @@ const currentExercise = computed(() => {
 
 /* Ajustes para pantallas muy pequeñas */
 @media (max-width: 480px) {
+  .detail-card {
+    max-width: 98vw;
+  }
+
   .detail-actions {
     padding: 12px 16px;
     flex-direction: column-reverse; /* Apila botones en móvil */
@@ -296,6 +307,33 @@ const currentExercise = computed(() => {
 
   .detail-title {
     font-size: 22px;
+  }
+
+  .detail-body {
+    padding: 20px;
+  }
+
+  .instruction-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 350px) {
+  .detail-title {
+    font-size: 20px;
+  }
+  
+  .nav-header {
+    gap: 10px;
+  }
+  
+  .tip-banner {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  .tip-banner-text {
+    font-size: 12px;
   }
 }
 </style>
