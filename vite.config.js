@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/gimnasioVUE/',
+  base: process.env.GITHUB_ACTIONS ? '/gimnasioVUE/' : '/',
   plugins: [
     vue({
       template: { transformAssetUrls }
