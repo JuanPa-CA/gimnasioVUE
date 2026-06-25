@@ -7,7 +7,7 @@
       <div class="hero-content">
         <!-- Info del grupo seleccionado -->
         <div class="row items-center no-wrap">
-          <q-icon :name="currentGroup?.icon" size="48px" color="red-6" class="q-mr-md" />
+          <q-icon :name="currentGroup?.icon" color="red-6" class="group-hero-icon q-mr-md" />
           <div>
             <h1 class="group-title">{{ currentGroup?.name }}</h1>
             <p class="group-sub">{{ currentGroup?.exercises.length }} ejercicios seleccionados para tu rutina</p>
@@ -26,7 +26,12 @@
     </main>
 
     <!-- Modal de Detalle con navegación interna -->
-    <ExerciseDetail v-model="detailsModal" :exercises="currentGroup?.exercises" v-model:currentIndex="selectedIndex" />
+    <ExerciseDetail 
+      v-model="detailsModal" 
+      :exercises="currentGroup?.exercises" 
+      v-model:currentIndex="selectedIndex" 
+      :group-label="currentGroup?.name"
+    />
 
     <!-- Retorno rápido al inicio de la página -->
     <q-page-scroller position="bottom-right" :scroll-offset="200" :offset="[18, 18]">
@@ -83,18 +88,12 @@ onMounted(() => {
   min-height: 100vh;
 }
 
-/* --- Group Hero Section --- */
+/* --- Group Hero Section (Estilo Base: Móvil) --- */
 .group-hero {
   position: relative;
   background: #111;
-  padding: 60px 48px;
-  border-bottom: 1px solid #222;
-}
-
-@media (max-width: 400px) {
-  .group-hero {
-    padding: 30px 20px;
-  }
+  padding: 30px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .hero-overlay {
@@ -110,53 +109,40 @@ onMounted(() => {
   margin: 0 auto;
 }
 
+.group-hero-icon {
+  font-size: 32px;
+}
+
 .group-title {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
-  font-size: 48px;
+  font-size: 28px;
   color: #fff;
   margin: 0;
-  line-height: 1;
+  line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-@media (max-width: 350px) {
-  .group-title {
-    font-size: 28px;
-  }
-}
-
 .group-sub {
-  color: #666;
-  margin: 8px 0 0 0;
-  font-size: 16px;
+  color: #888;
+  margin: 6px 0 0 0;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.4;
 }
 
-@media (max-width: 350px) {
-  .group-sub {
-    font-size: 13px;
-  }
-}
-
-/* --- Content Area & Grid --- */
+/* --- Content Area & Grid (Estilo Base: Móvil) --- */
 .content-area {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 24px 80px;
-}
-
-@media (max-width: 400px) {
-  .content-area {
-    padding: 24px 16px 60px;
-  }
+  padding: 24px 16px 60px;
 }
 
 .exercise-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  /* Cuadrícula 2x2 solicitada */
-  gap: 24px;
+  grid-template-columns: 1fr; /* 1 columna por defecto */
+  gap: 16px;
 }
 
 .grid-item {
@@ -169,25 +155,67 @@ onMounted(() => {
   color: white;
 }
 
-/* --- Responsive Design --- */
-@media (max-width: 768px) {
-  .group-hero {
-    padding: 40px 24px;
-  }
+/* --- Escalabilidad (Mobile-First: Min-Width) --- */
 
-  .group-title {
-    font-size: 32px;
-  }
-
+/* Pantallas medianas (Tabletas, Móviles grandes en horizontal - 600px+) */
+@media (min-width: 600px) {
   .exercise-grid {
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr); /* Cuadrícula 2x2 */
   }
 }
 
-@media (max-width: 500px) {
+/* Pantallas de escritorio pequeñas (768px+) */
+@media (min-width: 768px) {
+  .group-hero {
+    padding: 48px 32px;
+  }
+
+  .group-hero-icon {
+    font-size: 38px;
+  }
+
+  .group-title {
+    font-size: 38px;
+  }
+
+  .group-sub {
+    font-size: 15px;
+    margin-top: 8px;
+  }
+
+  .content-area {
+    padding: 32px 24px 70px;
+  }
+
   .exercise-grid {
-    grid-template-columns: 1fr;
-    /* Columna única en móviles pequeños */
+    gap: 20px;
+  }
+}
+
+/* Escritorios grandes (1024px+) */
+@media (min-width: 1024px) {
+  .group-hero {
+    padding: 60px 48px;
+  }
+
+  .group-hero-icon {
+    font-size: 48px;
+  }
+
+  .group-title {
+    font-size: 48px;
+  }
+
+  .group-sub {
+    font-size: 16px;
+  }
+
+  .content-area {
+    padding: 40px 24px 80px;
+  }
+
+  .exercise-grid {
+    gap: 24px;
   }
 }
 </style>
