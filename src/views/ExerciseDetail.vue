@@ -7,55 +7,40 @@
   >
     <q-card v-if="currentExercise" class="detail-card">
 
-      <!-- Encabezado Principal Unificado (Limpio y no saturado) -->
+      <!-- Encabezado Principal Unificado -->
       <header class="detail-header">
         <div class="row items-center no-wrap full-width">
-          <!-- Botón de Cerrar (Flecha en móvil, cruz en desktop) -->
           <q-btn 
             :icon="$q.screen.xs ? 'arrow_back' : 'close'" 
-            flat 
-            round 
-            dense 
-            color="grey-4" 
+            flat round dense color="grey-4" 
             v-close-popup 
             class="close-btn q-mr-sm" 
           />
-          
-          <!-- Título y Etiqueta -->
           <div class="col q-pr-xs">
             <div class="detail-label">{{ groupLabel || 'TÉCNICA CORRECTA' }}</div>
             <h2 class="detail-title">{{ currentExercise.name }}</h2>
           </div>
-
-          <!-- Controles de Navegación compactos (Escondidos en móvil) -->
+          <!-- Navegación desktop (oculta en móvil) -->
           <div class="row items-center no-wrap q-ml-md nav-controls gt-xs">
-            <q-btn 
-              flat 
-              round 
-              dense 
-              icon="chevron_left" 
-              color="white" 
+            <q-btn flat round dense icon="chevron_left" color="white"
               :disabled="currentIndex === 0"
-              @click="$emit('update:currentIndex', currentIndex - 1)"
-            />
+              @click="$emit('update:currentIndex', currentIndex - 1)" />
             <span class="nav-counter q-mx-xs">{{ currentIndex + 1 }}/{{ exercises.length }}</span>
-            <q-btn 
-              flat 
-              round 
-              dense 
-              icon="chevron_right" 
-              color="white" 
+            <q-btn flat round dense icon="chevron_right" color="white"
               :disabled="currentIndex === exercises.length - 1"
-              @click="$emit('update:currentIndex', currentIndex + 1)"
-            />
+              @click="$emit('update:currentIndex', currentIndex + 1)" />
           </div>
         </div>
       </header>
       <div class="header-stripe-modal" />
 
-      <!-- Contenedor con Scroll único sin barra inferior persistente -->
-      <div class="scroll-container">
-        <!-- Video Demostrativo -->
+      <!-- Contenedor principal con swipe touch (sin scroll) -->
+      <div 
+        class="main-container"
+        @touchstart="onTouchStart"
+        @touchend="onTouchEnd"
+      >
+        <!-- Video -->
         <div class="video-wrap">
           <q-video
             :ratio="16/9"
@@ -67,92 +52,101 @@
           />
         </div>
 
-        <!-- Instrucciones y Consejos -->
+        <!-- Body: texto arriba, banner anclado abajo -->
         <div class="detail-body">
-          <div class="section-label">Paso a paso</div>
-          <p class="instruction-text">{{ currentExercise.explanation }}</p>
 
-          <!-- Consejo Quote-Style (Limpio y desaturado) -->
+          <!-- Bloque superior: instrucciones -->
+          <div class="body-top">
+            <div class="section-label">Paso a paso</div>
+            <p class="instruction-text">{{ currentExercise.explanation }}</p>
+          </div>
+
+          <!-- Separador decorativo -->
+          <div class="deco-divider">
+            <span class="deco-line" />
+            <q-icon name="fitness_center" size="14px" color="red-7" class="deco-icon" />
+            <span class="deco-line" />
+          </div>
+
+          <!-- Banner anclado al fondo -->
           <div class="tip-banner">
             <q-icon name="bolt" size="16px" color="amber-7" class="q-mr-xs" style="margin-top: 2px" />
             <div class="tip-banner-text">{{ currentExercise.extra }}</div>
           </div>
 
-
         </div>
       </div>
 
-      <!-- Footer de Navegación para móviles (Fijo abajo) -->
-      <footer class="detail-footer lt-sm">
-        <div class="row items-center justify-between full-width q-px-md">
-          <q-btn 
-            flat 
-            dense 
-            icon="chevron_left" 
-            color="white" 
-            label="Anterior"
-            :disabled="currentIndex === 0"
-            @click="$emit('update:currentIndex', currentIndex - 1)"
-            class="nav-btn-mobile"
-          />
-          <span class="nav-counter-mobile">{{ currentIndex + 1 }} de {{ exercises.length }}</span>
-          <q-btn 
-            flat 
-            dense 
-            icon-right="chevron_right" 
-            color="white" 
-            label="Siguiente"
-            :disabled="currentIndex === exercises.length - 1"
-            @click="$emit('update:currentIndex', currentIndex + 1)"
-            class="nav-btn-mobile"
-          />
-        </div>
+      <!-- Footer navegación móvil (fijo abajo) -->
+      <footer class="detail-footer mobile-only">
+        <q-btn 
+          flat dense icon="chevron_left" color="white" label="Anterior"
+          :disabled="currentIndex === 0"
+          @click="$emit('update:currentIndex', currentIndex - 1)"
+          class="nav-btn-mobile"
+        />
+        <span class="nav-counter-mobile">{{ currentIndex + 1 }} / {{ exercises.length }}</span>
+        <q-btn 
+          flat dense icon-right="chevron_right" color="white" label="Siguiente"
+          :disabled="currentIndex === exercises.length - 1"
+          @click="$emit('update:currentIndex', currentIndex + 1)"
+          class="nav-btn-mobile"
+        />
       </footer>
+
     </q-card>
   </q-dialog>
 </template>
 
 <script setup>
-/**
- * Componente: ExerciseDetail
- * Modal que muestra los detalles completos de un ejercicio, con navegación interna.
- */
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useQuasar } from 'quasar'
 
 const props = defineProps({
-  modelValue: { type: Boolean, required: true }, // Controla la visibilidad del modal
-  exercises: { type: Array, default: () => [] }, // Lista de ejercicios del grupo actual
-  currentIndex: { type: Number, default: 0 },     // Índice del ejercicio que se está mostrando
-  groupLabel: { type: String, default: 'TÉCNICA CORRECTA' }
+  modelValue:   { type: Boolean, required: true },
+  exercises:    { type: Array,   default: () => [] },
+  currentIndex: { type: Number,  default: 0 },
+  groupLabel:   { type: String,  default: 'TÉCNICA CORRECTA' }
 })
 
 const emit = defineEmits(['update:modelValue', 'update:currentIndex'])
-
 const $q = useQuasar()
 
-/**
- * Obtiene el objeto del ejercicio actual basado en el índice.
- */
-const currentExercise = computed(() => {
-  if (props.exercises && props.exercises.length > 0) {
-    return props.exercises[props.currentIndex]
+const currentExercise = computed(() =>
+  props.exercises?.length ? props.exercises[props.currentIndex] : null
+)
+
+// ── Swipe horizontal para navegar ──────────────────────────────────────────
+const touchStartX = ref(0)
+const SWIPE_THRESHOLD = 60 // px mínimos para considerar swipe
+
+const onTouchStart = (e) => {
+  touchStartX.value = e.changedTouches[0].clientX
+}
+
+const onTouchEnd = (e) => {
+  const deltaX = e.changedTouches[0].clientX - touchStartX.value
+  if (Math.abs(deltaX) < SWIPE_THRESHOLD) return
+
+  if (deltaX < 0 && props.currentIndex < props.exercises.length - 1) {
+    // Swipe izquierda → siguiente
+    emit('update:currentIndex', props.currentIndex + 1)
+  } else if (deltaX > 0 && props.currentIndex > 0) {
+    // Swipe derecha → anterior
+    emit('update:currentIndex', props.currentIndex - 1)
   }
-  return null
-})
+}
 </script>
 
 <style scoped>
-/* Mobile-first base styles (target mobile devices by default) */
-
-/* 1. Contenedor del Modal (Pantalla Completa por defecto en móvil) */
+/* ── 1. Card (fullscreen en móvil) ──────────────────────────────────────── */
 .detail-card {
   background: #141414;
   border: none;
   width: 100vw;
   max-width: 100vw;
-  height: 100vh;
-  max-height: 100vh;
+  height: 100dvh;        /* dynamic viewport: excluye barra del browser */
+  max-height: 100dvh;
   border-radius: 0;
   margin: 0;
   display: flex;
@@ -160,14 +154,14 @@ const currentExercise = computed(() => {
   overflow: hidden;
 }
 
-/* 2. Encabezado Principal Unificado (Móvil) */
+/* ── 2. Header ──────────────────────────────────────────────────────────── */
 .detail-header {
   display: flex;
   align-items: center;
   padding: 12px 14px;
   flex-shrink: 0;
   background: #181818;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .detail-label {
@@ -191,8 +185,8 @@ const currentExercise = computed(() => {
 }
 
 .nav-controls {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 30px;
   padding: 1px 6px;
 }
@@ -214,30 +208,41 @@ const currentExercise = computed(() => {
   flex-shrink: 0;
 }
 
-/* 3. Contenedor con Scroll */
-.scroll-container {
-  overflow-y: auto;
-  flex-grow: 1;
+/* ── 3. Contenedor principal: ocupa TODO el espacio, sin scroll ─────────── */
+.main-container {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ── 4. Video ────────────────────────────────────────────────────────────── */
 .video-wrap {
   padding: 10px;
-  background: transparent;
 }
 
 .detail-video {
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-/* 4. Área del Contenido (Móvil) */
+/* ── 5. Body: flex column, texto arriba — banner abajo ───────────────────── */
 .detail-body {
-  padding: 12px 14px 24px;
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 12px 14px 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
+}
+
+.body-top {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .section-label {
@@ -254,17 +259,42 @@ const currentExercise = computed(() => {
   line-height: 1.6;
   margin: 0;
   font-weight: 300;
+  /* Clamp para que no desborde si el texto es largo */
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* 5. Consejo Quote-Style (Móvil) */
+/* ── 6. Separador decorativo ─────────────────────────────────────────────── */
+.deco-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: auto 0;   /* empuja banner al fondo y texto al tope */
+  padding: 12px 0;
+}
+
+.deco-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(231, 76, 60, 0.25), transparent);
+}
+
+.deco-icon {
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* ── 7. Tip banner anclado al fondo ──────────────────────────────────────── */
 .tip-banner {
   display: flex;
   align-items: flex-start;
   border-left: 3px solid #f39c12;
   padding: 10px 12px;
-  margin-top: 8px;
-  background: rgba(243, 156, 18, 0.05);
+  background: rgba(243,156,18,0.05);
   border-radius: 0 6px 6px 0;
+  flex-shrink: 0;
 }
 
 .tip-banner-text {
@@ -275,14 +305,21 @@ const currentExercise = computed(() => {
   font-weight: 300;
 }
 
-/* 6. Footer de Navegación en móvil */
+/* ── 9. Footer móvil ─────────────────────────────────────────────────────── */
 .detail-footer {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 60px;
+  padding: 0 16px;
   background: #181818;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255,255,255,0.05);
   flex-shrink: 0;
+}
+
+/* Ocultar footer en tablet/desktop con media query directa (más fiable que gt-xs) */
+@media (min-width: 600px) {
+  .mobile-only { display: none !important; }
 }
 
 .nav-btn-mobile {
@@ -302,9 +339,7 @@ const currentExercise = computed(() => {
   text-transform: uppercase;
 }
 
-
-
-/* --- Escalabilidad (Mobile-First: Min-Width) --- */
+/* ── 10. Tablet / Desktop ────────────────────────────────────────────────── */
 @media (min-width: 600px) {
   .detail-card {
     width: 680px;
@@ -314,7 +349,7 @@ const currentExercise = computed(() => {
     border: 1px solid #282828;
     border-radius: 12px;
     margin: auto;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   }
 
   .detail-header {
@@ -322,46 +357,36 @@ const currentExercise = computed(() => {
     border-bottom: 1px solid #222;
   }
 
-  .detail-title {
-    font-size: 24px;
-  }
+  .detail-title  { font-size: 24px; }
+  .detail-label  { font-size: 11px; letter-spacing: 2px; }
 
-  .detail-label {
-    font-size: 11px;
-    letter-spacing: 2px;
-  }
+  .nav-controls  { padding: 2px 8px; }
+  .nav-counter   { font-size: 13px; min-width: 32px; }
 
-  .nav-controls {
-    padding: 2px 8px;
-  }
-
-  .nav-counter {
-    font-size: 13px;
-    min-width: 32px;
-  }
-
-  .header-stripe-modal {
-    margin: 0 24px;
-  }
+  .header-stripe-modal { margin: 0 24px; }
 
   .detail-body {
-    padding: 28px;
-    gap: 20px;
+    padding: 20px 28px 24px;
+  }
+
+  .body-top {
+    gap: 10px;
   }
 
   .instruction-text {
     font-size: 15px;
     line-height: 1.7;
+    -webkit-line-clamp: 6;
   }
 
   .detail-video {
     border-radius: 12px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
   }
 
   .tip-banner {
     padding: 12px 16px;
-    margin-top: 12px;
+    margin-top: 4px;
   }
 
   .tip-banner-text {

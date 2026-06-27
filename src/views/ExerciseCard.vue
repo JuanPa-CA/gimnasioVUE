@@ -173,10 +173,7 @@ const videoId = computed(() => {
   color: #999;
   line-height: 1.6;
   flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 2; /* Límite de líneas en móvil */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+
 }
 
 /* --- Footer Section --- */
@@ -229,7 +226,10 @@ const videoId = computed(() => {
   }
 
   .exercise-desc {
+    display: -webkit-box;
     -webkit-line-clamp: 3; /* Mostrar más líneas en desktop */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 </style>
