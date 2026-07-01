@@ -46,7 +46,7 @@
             <router-link
               v-for="group in gymData"
               :key="group.id"
-              :to="{ name: 'group', params: { id: group.id } }"
+              :to="{ name: 'grupo', params: { id: group.id } }"
               custom
               v-slot="{ navigate, isActive }"
             >
@@ -68,7 +68,7 @@
 
         <!-- Footer drawer -->
         <div class="drawer-footer q-pa-md">
-          <q-item clickable v-ripple @click="$router.push('/')" class="logout-item">
+          <q-item clickable v-ripple @click="$router.push({ name: 'inicio' })" class="logout-item">
             <q-item-section avatar>
               <q-icon name="logout" color="grey-5" />
             </q-item-section>

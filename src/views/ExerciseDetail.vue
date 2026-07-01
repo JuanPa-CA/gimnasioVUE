@@ -51,7 +51,7 @@
         <!-- Video -->
         <div class="video-wrap">
           <q-video
-            :ratio="16/9"
+            :ratio="videoRatio"
             :src="currentExercise.video"
             class="detail-video"
             referrerpolicy="strict-origin-when-cross-origin"
@@ -143,6 +143,12 @@ const $q = useQuasar()
 const currentExercise = computed(() =>
   props.exercises?.length ? props.exercises[props.currentIndex] : null
 )
+
+/**
+ * Ratio del video: más alto (4:3) en desktop grande (layout de 2 columnas),
+ * estándar (16:9) en móvil/tablet.
+ */
+const videoRatio = computed(() => $q.screen.width >= 1024 ? 4 / 3 : 16 / 9)
 
 /**
  * Devuelve el ícono de Material adecuado según el tipo de equipo.
@@ -326,7 +332,7 @@ const onTouchEnd = (e) => {
 
 /* ── 4. Video ────────────────────────────────────────────────────────────── */
 .video-wrap {
-  padding: 10px;
+  padding: 25px 10px;
 }
 
 .detail-video {
@@ -545,7 +551,7 @@ const onTouchEnd = (e) => {
   }
 
   .tip-banner {
-    padding: 12px 16px;
+    padding: 12px 20px;
     margin-top: 4px;
   }
 
@@ -626,7 +632,7 @@ const onTouchEnd = (e) => {
     letter-spacing: 0.3px;
   }
   .tip-banner {
-    padding: 12px 14px;
+    padding: 12px 19px;
     margin-top: auto;
   }
   .tip-banner-text {

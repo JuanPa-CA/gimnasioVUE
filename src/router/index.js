@@ -3,13 +3,18 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    component: () => import('../views/HomeView.vue'),
+    name: 'inicio',
+    component: () => import('../views/HomeView.vue')
   },
   {
-    path: '/group/:id',
-    name: 'group',
+    path: '/grupo/:id',
+    name: 'grupo',
     component: () => import('../views/GroupView.vue'),
     props: true
+  },
+  {
+    path: '/:catchAll(.*)*',
+    redirect: { name: 'inicio' }
   }
 ]
 

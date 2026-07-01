@@ -33,14 +33,16 @@
         </div>
       </div>
 
-      <q-btn 
-        @click="enterTraining"
-        class="enter-btn animate-bounce-subtle"
-        unelevated
-      >
-        <span class="btn-label">ENTRAR</span>
-        <q-icon name="arrow_forward" class="q-ml-sm" />
-      </q-btn>
+      <router-link :to="{ name: 'grupo', params: { id: gymData[0].id } }" custom v-slot="{ navigate }">
+        <q-btn 
+          @click="navigate"
+          class="enter-btn animate-bounce-subtle"
+          unelevated
+        >
+          <span class="btn-label">EMPEZAR AHORA</span>
+          <q-icon name="arrow_forward" class="q-ml-sm" />
+        </q-btn>
+      </router-link>
     </div>
   </q-page>
 </template>
@@ -50,22 +52,10 @@
  * Vista Principal: HomeView
  * Pantalla de bienvenida que inicia el flujo de entrenamiento.
  */
-import { useRouter } from 'vue-router'
 import { gymData } from '../data/gymData'
-
-const router = useRouter()
 
 const groupCount = gymData.length
 const exerciseCount = gymData.reduce((sum, g) => sum + g.exercises.length, 0)
-
-/**
- * Inicia el flujo de entrenamiento navegando al primer grupo muscular.
- */
-const enterTraining = () => {
-  if (gymData.length > 0) {
-    router.push({ name: 'group', params: { id: gymData[0].id } })
-  }
-}
 </script>
 
 <style scoped>

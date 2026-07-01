@@ -1,43 +1,51 @@
 <template>
   <q-page class="page-root">
+    <div v-if="!currentGroup" class="empty-state">
+      <div class="empty-box">
+        <h2>Grupo no encontrado</h2>
+        <p>Lo sentimos, no encontramos el grupo que intentas ver. Regresa al inicio para escoger otro entrenamiento.</p>
+        <router-link :to="{ name: 'inicio' }" class="home-link">Volver al inicio</router-link>
+      </div>
+    </div>
 
-    <!-- Encabezado del Grupo Muscular (Hero) -->
-    <header class="group-hero">
-      <div class="hero-overlay" />
-      <div class="hero-content">
-        <!-- Info del grupo seleccionado -->
-        <div class="row items-center no-wrap">
-          <q-icon :name="currentGroup?.icon" color="red-6" class="group-hero-icon q-mr-md" />
-          <div>
-            <h1 class="group-title">{{ currentGroup?.name }}</h1>
-            <p class="group-sub">{{ currentGroup?.exercises.length }} ejercicios seleccionados para tu rutina</p>
+    <template v-else>
+      <!-- Encabezado del Grupo Muscular (Hero) -->
+      <header class="group-hero">
+        <div class="hero-overlay" />
+        <div class="hero-content">
+          <!-- Info del grupo seleccionado -->
+          <div class="row items-center no-wrap">
+            <q-icon :name="currentGroup?.icon" color="red-6" class="group-hero-icon q-mr-md" />
+            <div>
+              <h1 class="group-title">{{ currentGroup?.name }}</h1>
+              <p class="group-sub">{{ currentGroup?.exercises.length }} ejercicios seleccionados para tu rutina</p>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
 
-    <!-- Listado de Ejercicios (Cuadrícula 2x2) -->
-    <main class="content-area">
-      <div class="exercise-grid">
-        <div v-for="exercise in currentGroup?.exercises" :key="exercise.name" class="grid-item">
-          <ExerciseCard :exercise="exercise" :group-label="currentGroup?.name" @click="openExerciseDetail" />
+      <!-- Listado de Ejercicios (Cuadrícula 2x2) -->
+      <main class="content-area">
+        <div class="exercise-grid">
+          <div v-for="exercise in currentGroup?.exercises" :key="exercise.name" class="grid-item">
+            <ExerciseCard :exercise="exercise" :group-label="currentGroup?.name" @click="openExerciseDetail" />
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
 
-    <!-- Modal de Detalle con navegación interna -->
-    <ExerciseDetail 
-      v-model="detailsModal" 
-      :exercises="currentGroup?.exercises" 
-      v-model:currentIndex="selectedIndex" 
-      :group-label="currentGroup?.name"
-    />
+      <!-- Modal de Detalle con navegación interna -->
+      <ExerciseDetail 
+        v-model="detailsModal" 
+        :exercises="currentGroup?.exercises" 
+        v-model:currentIndex="selectedIndex" 
+        :group-label="currentGroup?.name"
+      />
 
-    <!-- Retorno rápido al inicio de la página -->
-    <q-page-scroller position="bottom-right" :scroll-offset="200" :offset="[18, 18]">
-      <q-btn round icon="keyboard_arrow_up" class="scroll-top-btn" />
-    </q-page-scroller>
-
+      <!-- Retorno rápido al inicio de la página -->
+      <q-page-scroller position="bottom-right" :scroll-offset="200" :offset="[18, 18]">
+        <q-btn round icon="keyboard_arrow_up" class="scroll-top-btn" />
+      </q-page-scroller>
+    </template>
   </q-page>
 </template>
 
