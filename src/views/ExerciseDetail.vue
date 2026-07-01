@@ -19,6 +19,14 @@
           <div class="col q-pr-xs">
             <div class="detail-label">{{ groupLabel || 'TÉCNICA CORRECTA' }}</div>
             <h2 class="detail-title">{{ currentExercise.name }}</h2>
+            <div class="detail-chips">
+              <span class="chip chip-difficulty" :class="`chip-diff--${currentExercise.difficulty}`">
+                {{ currentExercise.difficulty }}
+              </span>
+              <span v-for="eq in currentExercise.equipment" :key="eq" class="chip chip-equipment">
+                <q-icon :name="equipmentIcon(eq)" size="12px" class="q-mr-xs" />{{ eq }}
+              </span>
+            </div>
           </div>
           <!-- Navegación desktop (oculta en móvil) -->
           <div class="row items-center no-wrap q-ml-md nav-controls gt-xs">
@@ -136,6 +144,19 @@ const currentExercise = computed(() =>
   props.exercises?.length ? props.exercises[props.currentIndex] : null
 )
 
+/**
+ * Devuelve el ícono de Material adecuado según el tipo de equipo.
+ */
+const equipmentIcon = (eq) => {
+  const icons = {
+    'Barra': 'fitness_center',
+    'Mancuernas': 'sports_gymnastics',
+    'Máquina': 'settings',
+    'Peso corporal': 'accessibility_new'
+  }
+  return icons[eq] || 'sports_gymnastics'
+}
+
 // ── Swipe horizontal para navegar ──────────────────────────────────────────
 const touchStartX = ref(0)
 const SWIPE_THRESHOLD = 60 // px mínimos para considerar swipe
@@ -219,6 +240,50 @@ const onTouchEnd = (e) => {
   margin: 0;
 }
 
+.detail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  line-height: 1.2;
+}
+
+.chip-equipment {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #ccc;
+}
+
+.chip-diff--Principiante {
+  background: rgba(46,204,113,0.12);
+  border: 1px solid rgba(46,204,113,0.35);
+  color: #2ecc71;
+}
+
+.chip-diff--Intermedio {
+  background: rgba(243,156,18,0.12);
+  border: 1px solid rgba(243,156,18,0.35);
+  color: #f39c12;
+}
+
+.chip-diff--Avanzado {
+  background: rgba(231,76,60,0.14);
+  border: 1px solid rgba(231,76,60,0.4);
+  color: #e74c3c;
+}
+
 .nav-controls {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.08);
@@ -248,13 +313,15 @@ const onTouchEnd = (e) => {
   flex-shrink: 0;
 }
 
-/* ── 3. Contenedor principal: ocupa TODO el espacio, sin scroll ─────────── */
+/* ── 3. Contenedor principal: scrollable para que nada se corte ─────────── */
 .main-container {
   flex: 1 1 0;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ── 4. Video ────────────────────────────────────────────────────────────── */
@@ -279,7 +346,7 @@ const onTouchEnd = (e) => {
 .detail-body {
   flex: 1 1 0;
   min-height: 0;
-  padding: 12px 14px 14px;
+  padding: 12px 14px 22px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -305,11 +372,6 @@ const onTouchEnd = (e) => {
   line-height: 1.6;
   margin: 0;
   font-weight: 300;
-  /* Clamp para que no desborde si el texto es largo */
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 /* ── 6. Métricas: mini-cards individuales ────────────────────────────────── */
@@ -317,7 +379,7 @@ const onTouchEnd = (e) => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  margin: auto 0;
+  margin: 4px 0;
 }
 
 .metric-card {
@@ -434,7 +496,7 @@ const onTouchEnd = (e) => {
     width: 680px;
     max-width: 94vw;
     height: auto;
-    max-height: 95vh;
+    max-height: 97vh;
     border: 1px solid #282828;
     border-radius: 12px;
     margin: auto;
@@ -454,6 +516,7 @@ const onTouchEnd = (e) => {
 
   .detail-title  { font-size: 24px; }
   .detail-label  { font-size: 11px; letter-spacing: 2px; }
+  .chip { font-size: 11px; padding: 4px 10px; }
 
   .nav-controls  { padding: 2px 8px; }
   .nav-counter   { font-size: 13px; min-width: 32px; }
@@ -474,7 +537,6 @@ const onTouchEnd = (e) => {
   .instruction-text {
     font-size: 15px;
     line-height: 1.7;
-    -webkit-line-clamp: 6;
   }
 
   .detail-video {
@@ -511,7 +573,7 @@ const onTouchEnd = (e) => {
   .detail-card {
     width: 960px;
     max-width: 92vw;
-    max-height: 85vh;
+    max-height: 90vh;
   }
 
   .main-container {
@@ -547,7 +609,6 @@ const onTouchEnd = (e) => {
     padding: 16px 14px 20px;
   }
   .instruction-text {
-    -webkit-line-clamp: 8;
     line-height: 1.7;
     font-size: 14.5px;
   }
