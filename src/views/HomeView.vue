@@ -12,7 +12,7 @@
       </div>
       
       <p class="welcome-text q-px-md q-mb-xl animate-fade-in-slow">
-        Bienvenido al centro de entrenamiento más avanzado. <br>
+        Bienvenido al centro de entrenamiento más avanzado.
         Técnica, fuerza y disciplina en un solo lugar.
       </p>
 
@@ -20,7 +20,6 @@
         @click="enterTraining"
         class="enter-btn animate-bounce-subtle"
         unelevated
-        padding="15px 60px"
       >
         <span class="btn-label">ENTRAR</span>
         <q-icon name="arrow_forward" class="q-ml-sm" />
@@ -105,16 +104,10 @@ const enterTraining = () => {
 }
 
 .welcome-text {
-  font-size: 18px;
+  font-size: clamp(14px, 3.5vw, 18px);
   color: #ccc;
   line-height: 1.6;
   font-weight: 300;
-}
-
-@media (max-width: 350px) {
-  .welcome-text {
-    font-size: 15px;
-  }
 }
 
 .enter-btn {
@@ -123,13 +116,8 @@ const enterTraining = () => {
   border-radius: 4px;
   font-weight: 700;
   letter-spacing: 2px;
+  padding: clamp(10px, 3vw, 15px) clamp(28px, 10vw, 60px);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@media (max-width: 350px) {
-  .enter-btn {
-    padding: 12px 40px !important;
-  }
 }
 
 .enter-btn:hover {

@@ -60,14 +60,20 @@ const videoId = computed(() => {
 /* Mobile-first base styles (target mobile devices by default) */
 .exercise-card {
   background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.05); /* Borde sutil y elegante */
-  border-radius: 12px; /* Bordes más suaves */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   flex-direction: column;
   height: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.exercise-card:active {
+  transform: scale(0.98);
+  border-color: rgba(231, 76, 60, 0.4);
 }
 
 .exercise-card:hover {
@@ -146,7 +152,7 @@ const videoId = computed(() => {
 
 /* --- Content Section --- */
 .card-body {
-  padding: 16px;
+  padding: clamp(12px, 3vw, 16px);
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -197,8 +203,8 @@ const videoId = computed(() => {
 }
 
 .tip-text {
-  font-size: 11px;
-  color: #f39c12; /* Color ámbar más pulido */
+  font-size: 12px;
+  color: #f39c12;
   line-height: 1.4;
   font-style: italic;
   font-weight: 300;

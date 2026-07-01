@@ -146,7 +146,8 @@ onMounted(() => {
 }
 
 .grid-item {
-  min-height: 340px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Utils */
