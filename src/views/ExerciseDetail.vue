@@ -61,11 +61,31 @@
             <p class="instruction-text">{{ currentExercise.explanation }}</p>
           </div>
 
-          <!-- Separador decorativo -->
-          <div class="deco-divider">
-            <span class="deco-line" />
-            <q-icon name="fitness_center" size="14px" color="red-7" class="deco-icon" />
-            <span class="deco-line" />
+          <!-- Parámetros recomendados de entrenamiento -->
+          <div class="training-metrics">
+            <div class="metric-item">
+              <q-icon name="fitness_center" size="16px" color="red-5" class="metric-icon" />
+              <div class="metric-text">
+                <span class="metric-val">3-4</span>
+                <span class="metric-lbl">Series</span>
+              </div>
+            </div>
+            <div class="metric-divider" />
+            <div class="metric-item">
+              <q-icon name="loop" size="16px" color="red-5" class="metric-icon" />
+              <div class="metric-text">
+                <span class="metric-val">8-12</span>
+                <span class="metric-lbl">Reps</span>
+              </div>
+            </div>
+            <div class="metric-divider" />
+            <div class="metric-item">
+              <q-icon name="timer" size="16px" color="red-5" class="metric-icon" />
+              <div class="metric-text">
+                <span class="metric-val">90s</span>
+                <span class="metric-lbl">Descanso</span>
+              </div>
+            </div>
           </div>
 
           <!-- Banner anclado al fondo -->
@@ -236,7 +256,7 @@ const onTouchEnd = (e) => {
   padding: 12px 14px 14px;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 16px;
 }
 
 .body-top {
@@ -267,23 +287,52 @@ const onTouchEnd = (e) => {
 }
 
 /* ── 6. Separador decorativo ─────────────────────────────────────────────── */
-.deco-divider {
+.training-metrics {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: auto 0;   /* empuja banner al fondo y texto al tope */
-  padding: 12px 0;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: auto 0;
 }
 
-.deco-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(231, 76, 60, 0.25), transparent);
+.metric-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.deco-icon {
-  opacity: 0.6;
-  flex-shrink: 0;
+.metric-icon {
+  opacity: 0.8;
+}
+
+.metric-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.metric-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.metric-lbl {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #666;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.metric-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* ── 7. Tip banner anclado al fondo ──────────────────────────────────────── */
@@ -345,11 +394,17 @@ const onTouchEnd = (e) => {
     width: 680px;
     max-width: 94vw;
     height: auto;
-    max-height: 90vh;
+    max-height: 95vh;
     border: 1px solid #282828;
     border-radius: 12px;
     margin: auto;
     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+
+  .main-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   .detail-header {
@@ -366,7 +421,10 @@ const onTouchEnd = (e) => {
   .header-stripe-modal { margin: 0 24px; }
 
   .detail-body {
+    flex: 1 1 auto;
+    min-height: 0;
     padding: 20px 28px 24px;
+    gap: 24px;
   }
 
   .body-top {
@@ -396,6 +454,56 @@ const onTouchEnd = (e) => {
 
   .video-wrap {
     padding: 24px 28px 12px;
+  }
+
+  .training-metrics {
+    padding: 10px 16px;
+    border-radius: 10px;
+  }
+
+  .metric-val {
+    font-size: 16px;
+  }
+
+  .metric-lbl {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+}
+
+@media (max-width: 360px) {
+  .detail-body {
+    gap: 16px;
+    padding: 16px 14px 20px;
+  }
+  .instruction-text {
+    -webkit-line-clamp: 8;
+    line-height: 1.7;
+    font-size: 14.5px;
+  }
+  .training-metrics {
+    padding: 8px 12px;
+    margin: 8px 0;
+  }
+  .metric-item {
+    gap: 6px;
+  }
+  .metric-val {
+    font-size: 13px;
+  }
+  .metric-lbl {
+    font-size: 8.5px;
+    letter-spacing: 0.3px;
+  }
+  .metric-divider {
+    height: 16px;
+  }
+  .tip-banner {
+    padding: 12px 14px;
+    margin-top: auto;
+  }
+  .tip-banner-text {
+    font-size: 12px;
   }
 }
 </style>
