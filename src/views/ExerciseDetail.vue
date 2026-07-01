@@ -496,7 +496,7 @@ const onTouchEnd = (e) => {
     width: 680px;
     max-width: 94vw;
     height: auto;
-    max-height: 97vh;
+    max-height: 99vh;
     border: 1px solid #282828;
     border-radius: 12px;
     margin: auto;
@@ -573,7 +573,7 @@ const onTouchEnd = (e) => {
   .detail-card {
     width: 960px;
     max-width: 92vw;
-    max-height: 90vh;
+    max-height: 94vh;
   }
 
   .main-container {
