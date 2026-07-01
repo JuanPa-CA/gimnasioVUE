@@ -63,34 +63,34 @@
 
           <!-- Parámetros recomendados de entrenamiento -->
           <div class="training-metrics">
-            <div class="metric-item">
-              <q-icon name="fitness_center" size="16px" color="red-5" class="metric-icon" />
-              <div class="metric-text">
-                <span class="metric-val">3-4</span>
-                <span class="metric-lbl">Series</span>
+            <div class="metric-card">
+              <div class="metric-icon-wrap">
+                <q-icon name="fitness_center" size="18px" color="red-5" />
               </div>
+              <span class="metric-val">3-4</span>
+              <span class="metric-lbl">Series</span>
             </div>
-            <div class="metric-divider" />
-            <div class="metric-item">
-              <q-icon name="loop" size="16px" color="red-5" class="metric-icon" />
-              <div class="metric-text">
-                <span class="metric-val">8-12</span>
-                <span class="metric-lbl">Reps</span>
+            <div class="metric-card">
+              <div class="metric-icon-wrap">
+                <q-icon name="loop" size="18px" color="red-5" />
               </div>
+              <span class="metric-val">8-12</span>
+              <span class="metric-lbl">Reps</span>
             </div>
-            <div class="metric-divider" />
-            <div class="metric-item">
-              <q-icon name="timer" size="16px" color="red-5" class="metric-icon" />
-              <div class="metric-text">
-                <span class="metric-val">90s</span>
-                <span class="metric-lbl">Descanso</span>
+            <div class="metric-card">
+              <div class="metric-icon-wrap">
+                <q-icon name="timer" size="18px" color="red-5" />
               </div>
+              <span class="metric-val">90s</span>
+              <span class="metric-lbl">Descanso</span>
             </div>
           </div>
 
           <!-- Banner anclado al fondo -->
           <div class="tip-banner">
-            <q-icon name="bolt" size="16px" color="amber-7" class="q-mr-xs" style="margin-top: 2px" />
+            <div class="tip-icon-badge">
+              <q-icon name="bolt" size="16px" color="amber-6" />
+            </div>
             <div class="tip-banner-text">{{ currentExercise.extra }}</div>
           </div>
 
@@ -161,17 +161,30 @@ const onTouchEnd = (e) => {
 <style scoped>
 /* ── 1. Card (fullscreen en móvil) ──────────────────────────────────────── */
 .detail-card {
-  background: #141414;
+  background: linear-gradient(160deg, #181818 0%, #101010 100%);
   border: none;
   width: 100vw;
   max-width: 100vw;
-  height: 100dvh;        /* dynamic viewport: excluye barra del browser */
+  height: 100dvh;
   max-height: 100dvh;
   border-radius: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
+}
+
+.detail-card::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -15%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(231,76,60,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ── 2. Header ──────────────────────────────────────────────────────────── */
@@ -180,8 +193,10 @@ const onTouchEnd = (e) => {
   align-items: center;
   padding: 12px 14px;
   flex-shrink: 0;
-  background: #181818;
+  background: rgba(24,24,24,0.6);
   border-bottom: 1px solid rgba(255,255,255,0.05);
+  position: relative;
+  z-index: 1;
 }
 
 .detail-label {
@@ -209,6 +224,11 @@ const onTouchEnd = (e) => {
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 30px;
   padding: 1px 6px;
+  transition: border-color 0.2s;
+}
+
+.nav-controls:hover {
+  border-color: rgba(231,76,60,0.35);
 }
 
 .nav-counter {
@@ -247,6 +267,12 @@ const onTouchEnd = (e) => {
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   border: 1px solid rgba(255,255,255,0.08);
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.video-wrap:hover .detail-video {
+  border-color: rgba(231,76,60,0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 24px rgba(231,76,60,0.15);
 }
 
 /* ── 5. Body: flex column, texto arriba — banner abajo ───────────────────── */
@@ -286,37 +312,45 @@ const onTouchEnd = (e) => {
   overflow: hidden;
 }
 
-/* ── 6. Separador decorativo ─────────────────────────────────────────────── */
+/* ── 6. Métricas: mini-cards individuales ────────────────────────────────── */
 .training-metrics {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 8px 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
   margin: auto 0;
 }
 
-.metric-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.metric-icon {
-  opacity: 0.8;
-}
-
-.metric-text {
+.metric-card {
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.015) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 10px 6px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.metric-card:hover {
+  border-color: rgba(231,76,60,0.35);
+  transform: translateY(-2px);
+}
+
+.metric-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(231,76,60,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
 }
 
 .metric-val {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: #fff;
 }
@@ -324,25 +358,31 @@ const onTouchEnd = (e) => {
 .metric-lbl {
   font-size: 9px;
   text-transform: uppercase;
-  color: #666;
+  color: #888;
   letter-spacing: 0.5px;
   font-weight: 500;
-}
-
-.metric-divider {
-  width: 1px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.08);
 }
 
 /* ── 7. Tip banner anclado al fondo ──────────────────────────────────────── */
 .tip-banner {
   display: flex;
-  align-items: flex-start;
-  border-left: 3px solid #f39c12;
-  padding: 10px 12px;
-  background: rgba(243,156,18,0.05);
-  border-radius: 0 6px 6px 0;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(243,156,18,0.25);
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(243,156,18,0.09) 0%, rgba(243,156,18,0.02) 100%);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.tip-icon-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(243,156,18,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -456,11 +496,6 @@ const onTouchEnd = (e) => {
     padding: 24px 28px 12px;
   }
 
-  .training-metrics {
-    padding: 10px 16px;
-    border-radius: 10px;
-  }
-
   .metric-val {
     font-size: 16px;
   }
@@ -468,6 +503,41 @@ const onTouchEnd = (e) => {
   .metric-lbl {
     font-size: 10px;
     letter-spacing: 1px;
+  }
+}
+
+/* ── 11. Desktop grande: layout de 2 columnas ────────────────────────────── */
+@media (min-width: 1024px) {
+  .detail-card {
+    width: 960px;
+    max-width: 92vw;
+    max-height: 85vh;
+  }
+
+  .main-container {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .video-wrap {
+    flex: 0 0 46%;
+    padding: 24px 0 24px 24px;
+    display: flex;
+    align-items: center;
+  }
+
+  .detail-video {
+    width: 100%;
+  }
+
+  .detail-body {
+    flex: 1 1 54%;
+    padding: 24px 28px 24px 20px;
+    overflow-y: auto;
+  }
+
+  .training-metrics {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -482,11 +552,10 @@ const onTouchEnd = (e) => {
     font-size: 14.5px;
   }
   .training-metrics {
-    padding: 8px 12px;
-    margin: 8px 0;
-  }
-  .metric-item {
     gap: 6px;
+  }
+  .metric-card {
+    padding: 8px 4px;
   }
   .metric-val {
     font-size: 13px;
@@ -494,9 +563,6 @@ const onTouchEnd = (e) => {
   .metric-lbl {
     font-size: 8.5px;
     letter-spacing: 0.3px;
-  }
-  .metric-divider {
-    height: 16px;
   }
   .tip-banner {
     padding: 12px 14px;

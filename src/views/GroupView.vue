@@ -84,7 +84,9 @@ onMounted(() => {
 <style scoped>
 /* Contenedor Raíz */
 .page-root {
-  background: #0f0f0f;
+  background-color: #0a0a0a;
+  background-image:
+    radial-gradient(ellipse 800px 400px at 90% 0%, rgba(231,76,60,0.06) 0%, transparent 60%);
   min-height: 100vh;
 }
 
@@ -94,12 +96,26 @@ onMounted(() => {
   background: #111;
   padding: 30px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  overflow: hidden;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(231, 76, 60, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+  background:
+    linear-gradient(135deg, rgba(231, 76, 60, 0.12) 0%, rgba(0, 0, 0, 0) 60%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 22px);
+}
+
+.hero-overlay::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(231,76,60,0.18) 0%, transparent 70%);
+  filter: blur(20px);
 }
 
 .hero-content {
@@ -216,7 +232,19 @@ onMounted(() => {
   }
 
   .exercise-grid {
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
+  }
+}
+
+/* Escritorios extra grandes (1440px+) */
+@media (min-width: 1440px) {
+  .content-area {
+    max-width: 1500px;
+  }
+
+  .exercise-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 </style>

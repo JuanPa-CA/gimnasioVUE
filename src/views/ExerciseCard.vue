@@ -4,7 +4,7 @@
     <!-- Miniatura del video (YouTube) -->
     <div class="thumb-wrap">
       <img :src="`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`" :alt="exercise.name" class="thumb-img"
-        loading="lazy" />
+        loading="lazy" @error="onThumbError" />
       <div class="thumb-overlay">
         <div class="play-btn">
           <q-icon name="play_arrow" size="32px" color="white" />
@@ -54,12 +54,21 @@ const videoId = computed(() => {
   const match = url.match(/embed\/([^?]+)/)
   return match ? match[1] : ''
 })
+
+/**
+ * Si la miniatura mqdefault no existe, intenta con hqdefault como fallback.
+ */
+const onThumbError = (e) => {
+  if (!e.target.src.includes('hqdefault')) {
+    e.target.src = `https://img.youtube.com/vi/${videoId.value}/hqdefault.jpg`
+  }
+}
 </script>
 
 <style scoped>
 /* Mobile-first base styles (target mobile devices by default) */
 .exercise-card {
-  background: #141414;
+  background: linear-gradient(160deg, #171717 0%, #101010 100%);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   overflow: hidden;
@@ -105,7 +114,7 @@ const videoId = computed(() => {
 .thumb-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,7 +122,7 @@ const videoId = computed(() => {
 }
 
 .exercise-card:hover .thumb-overlay {
-  background: rgba(231, 76, 60, 0.15);
+  background: linear-gradient(180deg, rgba(231,76,60,0.05) 0%, rgba(231,76,60,0.25) 100%);
 }
 
 .play-btn {

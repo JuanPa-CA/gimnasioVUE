@@ -127,7 +127,12 @@ onUnmounted(() => { window.removeEventListener('open-gym-menu', handleToggleMenu
 }
 
 body {
-  background-color: #0f0f0f;
+  background-color: #0a0a0a;
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(231,76,60,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 20%, rgba(231,76,60,0.06) 0%, transparent 55%),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 26px);
+  background-attachment: fixed;
   font-family: var(--font-body);
 }
 
@@ -295,7 +300,7 @@ body {
 
 .menu-card {
   position: relative;
-  background: rgba(255,255,255,0.04);
+  background: linear-gradient(135deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.02) 100%);
   border: 1px solid rgba(255,255,255,0.09);
   border-radius: 14px;
   padding: 0 20px;
@@ -304,12 +309,25 @@ body {
   align-items: center;
   gap: 16px;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   flex: 1;              /* cada card crece igual para llenar el grid */
   min-height: 0;
+  overflow: hidden;
 }
+
+.menu-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 0% 50%, rgba(231,76,60,0.10), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.menu-card:hover::before { opacity: 1; }
 
 .menu-card:active {
   transform: scale(0.96);
@@ -317,8 +335,9 @@ body {
 }
 
 .menu-card--active {
-  background: rgba(231,76,60,0.08) !important;
+  background: linear-gradient(135deg, rgba(231,76,60,0.14) 0%, rgba(231,76,60,0.05) 100%) !important;
   border-color: rgba(231,76,60,0.45) !important;
+  box-shadow: 0 4px 16px rgba(231,76,60,0.15);
 }
 
 .menu-card--active .menu-card-icon { color: #e74c3c !important; }
@@ -329,11 +348,14 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 12px;
-  background: rgba(255,255,255,0.05);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  transition: background 0.2s;
 }
 
 .menu-card-icon {
@@ -354,6 +376,8 @@ body {
   line-height: 1.2;
   flex: 1;
   transition: color 0.2s;
+  position: relative;
+  z-index: 1;
 }
 
 .menu-card:hover:not(.menu-card--active) .menu-card-name { color: #fff; }
@@ -374,6 +398,8 @@ body {
   justify-content: center;
   padding: 0 6px;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Responsive ── */

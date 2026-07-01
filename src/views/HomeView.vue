@@ -11,10 +11,27 @@
         <div class="welcome-subtitle">DOMINA TU DESTINO</div>
       </div>
       
-      <p class="welcome-text q-px-md q-mb-xl animate-fade-in-slow">
+      <p class="welcome-text q-px-md q-mb-lg animate-fade-in-slow">
         Bienvenido al centro de entrenamiento más avanzado.
         Técnica, fuerza y disciplina en un solo lugar.
       </p>
+
+      <div class="stats-row gt-xs q-mb-xl animate-fade-in-slow">
+        <div class="stat-item">
+          <span class="stat-num">{{ groupCount }}</span>
+          <span class="stat-lbl">Grupos</span>
+        </div>
+        <div class="stat-divider" />
+        <div class="stat-item">
+          <span class="stat-num">{{ exerciseCount }}</span>
+          <span class="stat-lbl">Ejercicios</span>
+        </div>
+        <div class="stat-divider" />
+        <div class="stat-item">
+          <span class="stat-num">100%</span>
+          <span class="stat-lbl">Guiado</span>
+        </div>
+      </div>
 
       <q-btn 
         @click="enterTraining"
@@ -38,6 +55,9 @@ import { gymData } from '../data/gymData'
 
 const router = useRouter()
 
+const groupCount = gymData.length
+const exerciseCount = gymData.reduce((sum, g) => sum + g.exercises.length, 0)
+
 /**
  * Inicia el flujo de entrenamiento navegando al primer grupo muscular.
  */
@@ -58,10 +78,13 @@ const enterTraining = () => {
 .welcome-bg {
   position: absolute;
   inset: 0;
-  background-image: url('https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1600&auto=format&fit=crop');
+  background-image:
+    radial-gradient(ellipse 900px 700px at 50% 15%, rgba(231,76,60,0.16) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.85) 75%, #0a0a0a 100%),
+    url('https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1600&auto=format&fit=crop');
   background-size: cover;
   background-position: center;
-  filter: brightness(0.25) saturate(1.2);
+  filter: brightness(0.4) saturate(1.2);
 }
 
 .welcome-content {
@@ -108,6 +131,42 @@ const enterTraining = () => {
   color: #ccc;
   line-height: 1.6;
   font-weight: 300;
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+  color: #fff;
+  line-height: 1;
+}
+
+.stat-lbl {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #888;
+  font-weight: 500;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,0.12);
 }
 
 .enter-btn {
