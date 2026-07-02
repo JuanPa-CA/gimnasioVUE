@@ -39,7 +39,7 @@
           class="enter-btn animate-bounce-subtle"
           unelevated
         >
-          <span class="btn-label">EMPEZAR AHORA</span>
+          <span class="btn-label">ENTRAR</span>
           <q-icon name="arrow_forward" class="q-ml-sm" />
         </q-btn>
       </router-link>
