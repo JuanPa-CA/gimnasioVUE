@@ -4,13 +4,15 @@ const routes = [
   {
     path: '/',
     name: 'inicio',
-    component: () => import('../views/HomeView.vue')
+    component: () => import('../views/HomeView.vue'),
+    meta: { title: 'Inicio' }
   },
   {
     path: '/grupo/:id',
     name: 'grupo',
     component: () => import('../views/GroupView.vue'),
-    props: true
+    props: true,
+    meta: { title: 'Grupo' }
   },
   {
     path: '/:catchAll(.*)*',
