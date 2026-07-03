@@ -7,7 +7,7 @@
   >
     <q-card v-if="currentExercise" class="detail-card">
 
-      <!-- Encabezado Principal Unificado -->
+      <!-- Header -->
       <header class="detail-header">
         <div class="row items-center no-wrap full-width">
           <q-btn 
@@ -28,7 +28,6 @@
               </span>
             </div>
           </div>
-          <!-- Navegación desktop (oculta en móvil) -->
           <div class="row items-center no-wrap q-ml-md nav-controls gt-xs">
             <q-btn flat round dense icon="chevron_left" color="white"
               :disabled="currentIndex === 0"
@@ -42,7 +41,7 @@
       </header>
       <div class="header-stripe-modal" />
 
-      <!-- Contenedor principal con swipe touch (sin scroll) -->
+      <!-- Main -->
       <div 
         class="main-container"
         @touchstart="onTouchStart"
@@ -50,62 +49,78 @@
       >
         <!-- Video -->
         <div class="video-wrap">
-          <q-video
-            :ratio="videoRatio"
-            :src="currentExercise.video"
-            class="detail-video"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          />
+          <div class="video-inner">
+            <q-video
+              :ratio="videoRatio"
+              :src="currentExercise.video"
+              class="detail-video"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            />
+          </div>
+          <!-- Progress dots -->
+          <div class="progress-dots gt-xs">
+            <span 
+              v-for="(_, i) in exercises" :key="i"
+              class="dot"
+              :class="{ 'dot--active': i === currentIndex }"
+              @click="$emit('update:currentIndex', i)"
+            />
+          </div>
         </div>
 
-        <!-- Body: texto arriba, banner anclado abajo -->
+        <!-- Body -->
         <div class="detail-body">
 
-          <!-- Bloque superior: instrucciones -->
           <div class="body-top">
-            <div class="section-label">Paso a paso</div>
+            <div class="section-label">
+              <span class="section-label-line" />
+              Paso a paso
+            </div>
             <p class="instruction-text">{{ currentExercise.explanation }}</p>
           </div>
 
-          <!-- Parámetros recomendados de entrenamiento -->
+          <!-- Métricas -->
           <div class="training-metrics">
             <div class="metric-card">
               <div class="metric-icon-wrap">
-                <q-icon name="fitness_center" size="18px" color="red-5" />
+                <q-icon name="fitness_center" size="20px" color="red-5" />
               </div>
               <span class="metric-val">3-4</span>
               <span class="metric-lbl">Series</span>
             </div>
             <div class="metric-card">
               <div class="metric-icon-wrap">
-                <q-icon name="loop" size="18px" color="red-5" />
+                <q-icon name="loop" size="20px" color="red-5" />
               </div>
               <span class="metric-val">8-12</span>
               <span class="metric-lbl">Reps</span>
             </div>
             <div class="metric-card">
               <div class="metric-icon-wrap">
-                <q-icon name="timer" size="18px" color="red-5" />
+                <q-icon name="timer" size="20px" color="red-5" />
               </div>
               <span class="metric-val">90s</span>
               <span class="metric-lbl">Descanso</span>
             </div>
           </div>
 
-          <!-- Banner anclado al fondo -->
+          <!-- Tip banner -->
           <div class="tip-banner">
             <div class="tip-icon-badge">
-              <q-icon name="bolt" size="16px" color="amber-6" />
+              <q-icon name="bolt" size="20px" color="amber-5" />
             </div>
-            <div class="tip-banner-text">{{ currentExercise.extra }}</div>
+            <div>
+              <div class="tip-banner-label">Consejo PRO</div>
+              <div class="tip-banner-text">{{ currentExercise.extra }}</div>
+            </div>
           </div>
 
         </div>
       </div>
 
-      <!-- Footer navegación móvil (fijo abajo) -->
+      <!-- Footer móvil -->
       <footer class="detail-footer mobile-only">
         <q-btn 
           flat dense icon="chevron_left" color="white" label="Anterior"
@@ -113,7 +128,11 @@
           @click="$emit('update:currentIndex', currentIndex - 1)"
           class="nav-btn-mobile"
         />
-        <span class="nav-counter-mobile">{{ currentIndex + 1 }} / {{ exercises.length }}</span>
+        <div class="nav-counter-mobile-wrap">
+          <span class="nav-counter-mobile">{{ currentIndex + 1 }}</span>
+          <span class="nav-counter-sep">/</span>
+          <span class="nav-counter-total">{{ exercises.length }}</span>
+        </div>
         <q-btn 
           flat dense icon-right="chevron_right" color="white" label="Siguiente"
           :disabled="currentIndex === exercises.length - 1"
@@ -144,15 +163,8 @@ const currentExercise = computed(() =>
   props.exercises?.length ? props.exercises[props.currentIndex] : null
 )
 
-/**
- * Ratio del video: más alto (4:3) en desktop grande (layout de 2 columnas),
- * estándar (16:9) en móvil/tablet.
- */
 const videoRatio = computed(() => $q.screen.width >= 1024 ? 4 / 3 : 16 / 9)
 
-/**
- * Devuelve el ícono de Material adecuado según el tipo de equipo.
- */
 const equipmentIcon = (eq) => {
   const icons = {
     'Barra': 'fitness_center',
@@ -163,32 +175,24 @@ const equipmentIcon = (eq) => {
   return icons[eq] || 'sports_gymnastics'
 }
 
-// ── Swipe horizontal para navegar ──────────────────────────────────────────
 const touchStartX = ref(0)
-const SWIPE_THRESHOLD = 60 // px mínimos para considerar swipe
+const SWIPE_THRESHOLD = 60
 
-const onTouchStart = (e) => {
-  touchStartX.value = e.changedTouches[0].clientX
-}
-
+const onTouchStart = (e) => { touchStartX.value = e.changedTouches[0].clientX }
 const onTouchEnd = (e) => {
   const deltaX = e.changedTouches[0].clientX - touchStartX.value
   if (Math.abs(deltaX) < SWIPE_THRESHOLD) return
-
-  if (deltaX < 0 && props.currentIndex < props.exercises.length - 1) {
-    // Swipe izquierda → siguiente
+  if (deltaX < 0 && props.currentIndex < props.exercises.length - 1)
     emit('update:currentIndex', props.currentIndex + 1)
-  } else if (deltaX > 0 && props.currentIndex > 0) {
-    // Swipe derecha → anterior
+  else if (deltaX > 0 && props.currentIndex > 0)
     emit('update:currentIndex', props.currentIndex - 1)
-  }
 }
 </script>
 
 <style scoped>
-/* ── 1. Card (fullscreen en móvil) ──────────────────────────────────────── */
+/* ── Base (móvil fullscreen) ── */
 .detail-card {
-  background: linear-gradient(160deg, #181818 0%, #101010 100%);
+  background: linear-gradient(160deg, #181818 0%, #0e0e0e 100%);
   border: none;
   width: 100vw;
   max-width: 100vw;
@@ -207,20 +211,21 @@ const onTouchEnd = (e) => {
   position: absolute;
   top: -20%;
   right: -15%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(231,76,60,0.12) 0%, transparent 70%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(231,76,60,0.10) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* ── 2. Header ──────────────────────────────────────────────────────────── */
+/* ── Header ── */
 .detail-header {
   display: flex;
   align-items: center;
-  padding: 12px 14px;
+  padding: 14px 16px;
   flex-shrink: 0;
-  background: rgba(24,24,24,0.6);
+  background: rgba(20,20,20,0.85);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(255,255,255,0.05);
   position: relative;
   z-index: 1;
@@ -230,27 +235,28 @@ const onTouchEnd = (e) => {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   color: #e74c3c;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
   text-transform: uppercase;
 }
 
 .detail-title {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 800;
-  font-size: 18px;
+  font-size: 20px;
   color: #fff;
   letter-spacing: 0.5px;
-  line-height: 1.2;
+  line-height: 1.15;
   margin: 0;
+  text-transform: uppercase;
 }
 
 .detail-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .chip {
@@ -259,17 +265,17 @@ const onTouchEnd = (e) => {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 20px;
   line-height: 1.2;
 }
 
 .chip-equipment {
   background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #ccc;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #bbb;
 }
 
 .chip-diff--Principiante {
@@ -277,16 +283,14 @@ const onTouchEnd = (e) => {
   border: 1px solid rgba(46,204,113,0.35);
   color: #2ecc71;
 }
-
 .chip-diff--Intermedio {
   background: rgba(243,156,18,0.12);
   border: 1px solid rgba(243,156,18,0.35);
   color: #f39c12;
 }
-
 .chip-diff--Avanzado {
   background: rgba(231,76,60,0.14);
-  border: 1px solid rgba(231,76,60,0.4);
+  border: 1px solid rgba(231,76,60,0.45);
   color: #e74c3c;
 }
 
@@ -294,32 +298,29 @@ const onTouchEnd = (e) => {
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 30px;
-  padding: 1px 6px;
+  padding: 2px 8px;
   transition: border-color 0.2s;
+  flex-shrink: 0;
 }
-
-.nav-controls:hover {
-  border-color: rgba(231,76,60,0.35);
-}
+.nav-controls:hover { border-color: rgba(231,76,60,0.4); }
 
 .nav-counter {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  color: #888;
-  font-size: 12px;
+  color: #777;
+  font-size: 13px;
   letter-spacing: 1px;
-  min-width: 28px;
+  min-width: 32px;
   text-align: center;
 }
 
 .header-stripe-modal {
   height: 2px;
-  background: linear-gradient(90deg, #c0392b, #e74c3c80, transparent);
-  margin: 0 14px;
+  background: linear-gradient(90deg, #c0392b, rgba(231,76,60,0.4), transparent);
   flex-shrink: 0;
 }
 
-/* ── 3. Contenedor principal: scrollable para que nada se corte ─────────── */
+/* ── Main container ── */
 .main-container {
   flex: 1 1 0;
   min-height: 0;
@@ -330,313 +331,371 @@ const onTouchEnd = (e) => {
   -webkit-overflow-scrolling: touch;
 }
 
-/* ── 4. Video ────────────────────────────────────────────────────────────── */
+/* ── Video ── */
 .video-wrap {
-  padding: 25px 10px;
+  padding: 20px 16px 8px;
+  flex-shrink: 0;
 }
 
-.detail-video {
-  border-radius: 8px;
+.video-inner {
+  position: relative;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.08);
-  transition: box-shadow 0.3s, border-color 0.3s;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06);
+  transition: box-shadow 0.3s, transform 0.3s;
 }
 
-.video-wrap:hover .detail-video {
-  border-color: rgba(231,76,60,0.3);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 24px rgba(231,76,60,0.15);
+.video-inner:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 0 24px rgba(231,76,60,0.18), 0 0 0 1px rgba(231,76,60,0.25);
+  transform: translateY(-1px);
 }
 
-/* ── 5. Body: flex column, texto arriba — banner abajo ───────────────────── */
+.detail-video { display: block; }
+
+/* Dots de progreso */
+.progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dot--active {
+  background: #e74c3c;
+  width: 20px;
+  border-radius: 3px;
+}
+
+.dot:hover:not(.dot--active) { background: rgba(255,255,255,0.35); }
+
+/* ── Body ── */
 .detail-body {
   flex: 1 1 0;
   min-height: 0;
-  padding: 12px 14px 22px;
+  padding: 16px 16px 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .body-top {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: #666;
+  color: #555;
+}
+
+.section-label-line {
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  background: #e74c3c;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .instruction-text {
   font-size: 14px;
-  color: #ccc;
-  line-height: 1.6;
+  color: #c8c8c8;
+  line-height: 1.7;
   margin: 0;
   font-weight: 300;
 }
 
-/* ── 6. Métricas: mini-cards individuales ────────────────────────────────── */
+/* ── Métricas ── */
 .training-metrics {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin: 4px 0;
+  gap: 10px;
 }
 
 .metric-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  background: linear-gradient(160deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.015) 100%);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 10px;
-  padding: 10px 6px;
-  transition: border-color 0.2s, transform 0.2s;
+  gap: 6px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.015) 100%);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 2px solid transparent;
+  border-radius: 12px;
+  padding: 14px 8px;
+  transition: border-color 0.2s, transform 0.2s, background 0.2s;
+  cursor: default;
 }
 
 .metric-card:hover {
-  border-color: rgba(231,76,60,0.35);
-  transform: translateY(-2px);
+  border-bottom-color: #e74c3c;
+  background: linear-gradient(160deg, rgba(231,76,60,0.07) 0%, rgba(231,76,60,0.02) 100%);
+  transform: translateY(-3px);
 }
 
 .metric-icon-wrap {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: rgba(231,76,60,0.1);
+  background: rgba(231,76,60,0.12);
+  border: 1px solid rgba(231,76,60,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2px;
 }
 
 .metric-val {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   color: #fff;
+  line-height: 1;
 }
 
 .metric-lbl {
   font-size: 9px;
   text-transform: uppercase;
-  color: #888;
-  letter-spacing: 0.5px;
-  font-weight: 500;
+  color: #666;
+  letter-spacing: 1px;
+  font-weight: 600;
 }
 
-/* ── 7. Tip banner anclado al fondo ──────────────────────────────────────── */
+/* ── Tip banner ── */
 .tip-banner {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid rgba(243,156,18,0.25);
-  padding: 10px 14px;
-  background: linear-gradient(135deg, rgba(243,156,18,0.09) 0%, rgba(243,156,18,0.02) 100%);
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid rgba(243,156,18,0.2);
+  border-left: 3px solid rgba(243,156,18,0.6);
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(243,156,18,0.07) 0%, rgba(243,156,18,0.02) 100%);
   border-radius: 10px;
   flex-shrink: 0;
+  margin-top: auto;
 }
 
 .tip-icon-badge {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(243,156,18,0.15);
+  background: rgba(243,156,18,0.12);
+  border: 1px solid rgba(243,156,18,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
+.tip-banner-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(243,156,18,0.7);
+  margin-bottom: 4px;
+}
+
 .tip-banner-text {
-  font-size: 12px;
-  color: #f39c12;
-  line-height: 1.5;
+  font-size: 13px;
+  color: #e8a020;
+  line-height: 1.55;
   font-style: italic;
   font-weight: 300;
 }
 
-/* ── 9. Footer móvil ─────────────────────────────────────────────────────── */
+/* ── Footer móvil ── */
 .detail-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px;
-  padding: 0 16px;
-  background: #181818;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  height: 68px;
+  padding: 0 12px;
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,0.06);
   flex-shrink: 0;
 }
 
-/* Ocultar footer en tablet/desktop con media query directa (más fiable que gt-xs) */
-@media (min-width: 600px) {
-  .mobile-only { display: none !important; }
-}
+@media (min-width: 600px) { .mobile-only { display: none !important; } }
 
 .nav-btn-mobile {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 15px;
   letter-spacing: 1px;
   text-transform: uppercase;
+  min-width: 100px;
+}
+
+.nav-counter-mobile-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
 }
 
 .nav-counter-mobile {
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
+  font-weight: 800;
   color: #e74c3c;
-  font-size: 14px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
+  font-size: 22px;
+  line-height: 1;
 }
 
-/* ── 10. Tablet / Desktop ────────────────────────────────────────────────── */
+.nav-counter-sep {
+  font-family: 'Barlow Condensed', sans-serif;
+  color: #444;
+  font-size: 16px;
+  margin: 0 2px;
+}
+
+.nav-counter-total {
+  font-family: 'Barlow Condensed', sans-serif;
+  color: #666;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ── 600px (tablet / flotante) ── */
 @media (min-width: 600px) {
   .detail-card {
-    width: 680px;
+    width: 700px;
     max-width: 94vw;
     height: auto;
-    max-height: 99vh;
-    border: 1px solid #282828;
-    border-radius: 12px;
+    max-height: 92vh;
+    border: 1px solid #242424;
+    border-radius: 16px;
     margin: auto;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
   }
 
   .main-container {
     flex: 1 1 auto;
-    min-height: 0;
     overflow-y: auto;
   }
 
-  .detail-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid #222;
-  }
+  .detail-header { padding: 18px 24px; }
+  .detail-title  { font-size: 26px; }
+  .detail-label  { font-size: 11px; letter-spacing: 2.5px; }
+  .chip          { font-size: 11px; padding: 4px 12px; }
 
-  .detail-title  { font-size: 24px; }
-  .detail-label  { font-size: 11px; letter-spacing: 2px; }
-  .chip { font-size: 11px; padding: 4px 10px; }
+  .nav-controls  { padding: 3px 10px; }
+  .nav-counter   { font-size: 14px; }
 
-  .nav-controls  { padding: 2px 8px; }
-  .nav-counter   { font-size: 13px; min-width: 32px; }
+  .header-stripe-modal { height: 2px; }
 
-  .header-stripe-modal { margin: 0 24px; }
+  .video-wrap { padding: 24px 24px 10px; }
+  .video-inner { border-radius: 12px; }
 
-  .detail-body {
-    flex: 1 1 auto;
-    min-height: 0;
-    padding: 20px 28px 24px;
-    gap: 24px;
-  }
+  .detail-body { padding: 20px 28px 28px; gap: 22px; }
 
-  .body-top {
-    gap: 10px;
-  }
+  .instruction-text { font-size: 15px; line-height: 1.75; }
 
-  .instruction-text {
-    font-size: 15px;
-    line-height: 1.7;
-  }
+  .metric-card { padding: 16px 10px; }
+  .metric-val  { font-size: 22px; }
+  .metric-lbl  { font-size: 10px; letter-spacing: 1.5px; }
+  .metric-icon-wrap { width: 42px; height: 42px; }
 
-  .detail-video {
-    border-radius: 12px;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
-  }
-
-  .tip-banner {
-    padding: 12px 20px;
-    margin-top: 4px;
-  }
-
-  .tip-banner-text {
-    font-size: 13px;
-    line-height: 1.6;
-  }
-
-  .video-wrap {
-    padding: 24px 28px 12px;
-  }
-
-  .metric-val {
-    font-size: 16px;
-  }
-
-  .metric-lbl {
-    font-size: 10px;
-    letter-spacing: 1px;
-  }
+  .tip-banner { padding: 16px 20px; gap: 14px; }
+  .tip-banner-text { font-size: 14px; line-height: 1.65; }
 }
 
-/* ── 11. Desktop grande: layout de 2 columnas ────────────────────────────── */
+/* ── 1024px (desktop 2 columnas) ── */
 @media (min-width: 1024px) {
   .detail-card {
-    width: 960px;
+    width: 1000px;
     max-width: 92vw;
-    max-height: 94vh;
+    max-height: 90vh;
   }
 
   .main-container {
     flex-direction: row;
     align-items: stretch;
+    overflow-y: hidden;
   }
 
   .video-wrap {
-    flex: 0 0 46%;
-    padding: 24px 0 24px 24px;
+    flex: 0 0 48%;
+    padding: 28px 0 28px 28px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid rgba(255,255,255,0.05);
   }
 
-  .detail-video {
-    width: 100%;
-  }
+  .video-inner { border-radius: 14px; }
+
+  .progress-dots { margin-top: 16px; }
 
   .detail-body {
-    flex: 1 1 54%;
-    padding: 24px 28px 24px 20px;
+    flex: 1 1 52%;
+    padding: 28px 32px;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(231,76,60,0.3) transparent;
+    gap: 24px;
   }
 
-  .training-metrics {
-    grid-template-columns: repeat(3, 1fr);
+  .detail-body::-webkit-scrollbar { width: 4px; }
+  .detail-body::-webkit-scrollbar-track { background: transparent; }
+  .detail-body::-webkit-scrollbar-thumb { background: rgba(231,76,60,0.3); border-radius: 4px; }
+
+  .detail-title { font-size: 28px; }
+  .detail-header { padding: 20px 28px; }
+  .header-stripe-modal { margin: 0; }
+
+  .metric-card { padding: 18px 12px; }
+  .metric-val  { font-size: 24px; }
+  .metric-icon-wrap { width: 46px; height: 46px; }
+}
+
+/* ── 1280px ── */
+@media (min-width: 1280px) {
+  .detail-card {
+    width: 1180px;
+    max-width: 90vw;
+    max-height: 88vh;
+  }
+
+  .video-wrap { flex: 0 0 52%; padding: 32px 0 32px 32px; }
+  .detail-body { padding: 32px 40px; gap: 28px; }
+  .detail-title { font-size: 32px; }
+  .instruction-text { font-size: 16px; }
+  .metric-val { font-size: 26px; }
+  .tip-banner-text { font-size: 15px; }
+}
+
+/* ── 1440px ── */
+@media (min-width: 1440px) {
+  .detail-card {
+    width: 1360px;
+    max-width: 88vw;
   }
 }
 
+/* ── Móvil pequeño ── */
 @media (max-width: 360px) {
-  .detail-body {
-    gap: 16px;
-    padding: 16px 14px 20px;
-  }
-  .instruction-text {
-    line-height: 1.7;
-    font-size: 14.5px;
-  }
-  .training-metrics {
-    gap: 6px;
-  }
-  .metric-card {
-    padding: 8px 4px;
-  }
-  .metric-val {
-    font-size: 13px;
-  }
-  .metric-lbl {
-    font-size: 8.5px;
-    letter-spacing: 0.3px;
-  }
-  .tip-banner {
-    padding: 12px 19px;
-    margin-top: auto;
-  }
-  .tip-banner-text {
-    font-size: 12px;
-  }
+  .detail-body   { gap: 14px; padding: 14px 14px 20px; }
+  .instruction-text { font-size: 13.5px; }
+  .training-metrics { gap: 7px; }
+  .metric-card   { padding: 10px 5px; }
+  .metric-val    { font-size: 17px; }
+  .metric-lbl    { font-size: 8px; }
+  .tip-banner    { padding: 11px 13px; }
+  .tip-banner-text { font-size: 12px; }
 }
 </style>
