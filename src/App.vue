@@ -100,23 +100,22 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { gymData } from './data/gymData'
 
+// ── Estado ──────────────────────────────────────────────
 const $q = useQuasar()
 const leftDrawerOpen = ref(false)
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+// ── Acciones del drawer ──────────────────────────────────
+const openDrawer  = () => { leftDrawerOpen.value = true  }
+const closeDrawer = () => { leftDrawerOpen.value = false }
+const toggleDrawer = () => { leftDrawerOpen.value = !leftDrawerOpen.value }
 
-const onMenuItemClick = () => {
-  leftDrawerOpen.value = false
-}
+// Alias semánticos usados en el template
+const toggleLeftDrawer = toggleDrawer
+const onMenuItemClick  = closeDrawer
 
-const handleToggleMenu = () => {
-  leftDrawerOpen.value = true
-}
-
-onMounted(() => { window.addEventListener('open-gym-menu', handleToggleMenu) })
-onUnmounted(() => { window.removeEventListener('open-gym-menu', handleToggleMenu) })
+// ── Evento global (botón de menú externo) ───────────────
+onMounted(()   => window.addEventListener('open-gym-menu', openDrawer))
+onUnmounted(() => window.removeEventListener('open-gym-menu', openDrawer))
 </script>
 
 <style>
