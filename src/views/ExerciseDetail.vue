@@ -149,43 +149,53 @@
 import { computed, ref } from 'vue'
 import { useQuasar } from 'quasar'
 
+// ── Props y emits ────────────────────────────────────────
 const props = defineProps({
   modelValue:   { type: Boolean, required: true },
   exercises:    { type: Array,   default: () => [] },
   currentIndex: { type: Number,  default: 0 },
   groupLabel:   { type: String,  default: 'TÉCNICA CORRECTA' }
 })
-
 const emit = defineEmits(['update:modelValue', 'update:currentIndex'])
+
+// ── Quasar ───────────────────────────────────────────────
 const $q = useQuasar()
 
+// ── Computed ─────────────────────────────────────────────
 const currentExercise = computed(() =>
   props.exercises?.length ? props.exercises[props.currentIndex] : null
 )
 
-const videoRatio = computed(() => $q.screen.width >= 1024 ? 4 / 3 : 16 / 9)
+const videoRatio = computed(() =>
+  $q.screen.width >= 1024 ? 4 / 3 : 16 / 9
+)
 
-const equipmentIcon = (eq) => {
-  const icons = {
-    'Barra': 'fitness_center',
-    'Mancuernas': 'sports_gymnastics',
-    'Máquina': 'settings',
-    'Peso corporal': 'accessibility_new'
-  }
-  return icons[eq] || 'sports_gymnastics'
+// ── Helpers ──────────────────────────────────────────────
+const EQUIPMENT_ICONS = {
+  'Barra':        'fitness_center',
+  'Mancuernas':   'sports_gymnastics',
+  'Máquina':      'settings',
+  'Peso corporal':'accessibility_new'
+}
+const equipmentIcon = (eq) => EQUIPMENT_ICONS[eq] ?? 'sports_gymnastics'
+
+// ── Swipe (navegación táctil) ────────────────────────────
+const SWIPE_THRESHOLD = 60
+const touchStartX = ref(0)
+
+const onTouchStart = (e) => {
+  touchStartX.value = e.changedTouches[0].clientX
 }
 
-const touchStartX = ref(0)
-const SWIPE_THRESHOLD = 60
-
-const onTouchStart = (e) => { touchStartX.value = e.changedTouches[0].clientX }
 const onTouchEnd = (e) => {
-  const deltaX = e.changedTouches[0].clientX - touchStartX.value
-  if (Math.abs(deltaX) < SWIPE_THRESHOLD) return
-  if (deltaX < 0 && props.currentIndex < props.exercises.length - 1)
-    emit('update:currentIndex', props.currentIndex + 1)
-  else if (deltaX > 0 && props.currentIndex > 0)
-    emit('update:currentIndex', props.currentIndex - 1)
+  const delta = e.changedTouches[0].clientX - touchStartX.value
+  if (Math.abs(delta) < SWIPE_THRESHOLD) return
+
+  const isSwipeLeft  = delta < 0 && props.currentIndex < props.exercises.length - 1
+  const isSwipeRight = delta > 0 && props.currentIndex > 0
+
+  if (isSwipeLeft)  emit('update:currentIndex', props.currentIndex + 1)
+  if (isSwipeRight) emit('update:currentIndex', props.currentIndex - 1)
 }
 </script>
 
