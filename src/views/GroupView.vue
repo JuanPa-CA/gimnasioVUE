@@ -50,43 +50,37 @@
 </template>
 
 <script setup>
-/**
- * Vista de Grupo: GroupView
- * Muestra los ejercicios específicos del músculo seleccionado.
- */
+// Muestra el listado de ejercicios del grupo muscular seleccionado vía URL.
 import { ref, computed, onMounted } from 'vue'
 import { gymData } from '../data/gymData'
-import ExerciseCard from './ExerciseCard.vue'
+import ExerciseCard   from './ExerciseCard.vue'
 import ExerciseDetail from './ExerciseDetail.vue'
 
-// Props recibidos desde el router
+// ── Props ────────────────────────────────────────────────
 const props = defineProps({
-  id: { type: String, required: true }
+  id: { type: String, required: true }  // ID del grupo muscular (viene del router)
 })
 
-// Estado de la UI
+// ── Estado ───────────────────────────────────────────────
 const detailsModal = ref(false)
 const selectedIndex = ref(0)
 
-/**
- * Busca los datos del grupo actual basados en el ID de la URL
- */
-const currentGroup = computed(() => gymData.find(g => g.id === props.id))
+// ── Computed ─────────────────────────────────────────────
+const currentGroup = computed(() =>
+  gymData.find(g => g.id === props.id)
+)
 
-/**
- * Abre el modal de detalles y posiciona el índice en el ejercicio clicado.
- * @param {Object} exercise - El objeto del ejercicio seleccionado.
- */
+// ── Acciones ─────────────────────────────────────────────
+
+// Abre el modal posicionado en el ejercicio clicado
 const openExerciseDetail = (exercise) => {
   const index = currentGroup.value.exercises.findIndex(e => e.name === exercise.name)
   selectedIndex.value = index !== -1 ? index : 0
   detailsModal.value = true
 }
 
-// Aseguramos que la página comience arriba al cargar
-onMounted(() => {
-  window.scrollTo(0, 0)
-})
+// Siempre iniciar la vista desde el tope de la página
+onMounted(() => window.scrollTo(0, 0))
 </script>
 
 <style scoped>
