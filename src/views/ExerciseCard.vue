@@ -32,32 +32,28 @@
 </template>
 
 <script setup>
-/**
- * Componente: ExerciseCard
- * Muestra una vista previa de un ejercicio con su video e info básica.
- */
+// Muestra una vista previa de un ejercicio: miniatura, título, descripción y tip.
 import { computed } from 'vue'
 
+// ── Props y emits ────────────────────────────────────────
 const props = defineProps({
-  exercise: { type: Object, required: true },
+  exercise:   { type: Object, required: true },
   groupLabel: { type: String, default: '' }
 })
-
 defineEmits(['click'])
 
-/**
- * Extrae el ID del video de YouTube desde la URL de embed
- * @returns {string} El ID del video (ej: 'rT7DgJIMZzo')
- */
+// ── Computed ─────────────────────────────────────────────
+
+// Extrae el ID del video desde una URL de embed de YouTube
+// Ejemplo: "https://youtube.com/embed/rT7DgJIMZzo" → "rT7DgJIMZzo"
 const videoId = computed(() => {
-  const url = props.exercise.video
-  const match = url.match(/embed\/([^?]+)/)
+  const match = props.exercise.video.match(/embed\/([^?]+)/)
   return match ? match[1] : ''
 })
 
-/**
- * Si la miniatura mqdefault no existe, intenta con hqdefault como fallback.
- */
+// ── Handlers ─────────────────────────────────────────────
+
+// Fallback: si mqdefault no existe, intenta hqdefault
 const onThumbError = (e) => {
   if (!e.target.src.includes('hqdefault')) {
     e.target.src = `https://img.youtube.com/vi/${videoId.value}/hqdefault.jpg`
